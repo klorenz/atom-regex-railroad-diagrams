@@ -1,0 +1,14 @@
+{
+  "name": "regex-railroad-diagram",
+  "main": "./lib/regex-railroad-diagram",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "repository": "https://github.com/atom/regex-railroad-diagram",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+    "regexp": "~1.0.0"
+  }
+}

@@ -1,0 +1,56 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.regex-railroad-diagram {
+  background: @tab-bar-background-color;
+
+  @terminal-text-color: @tab-background-color;
+  @non-terminal-text-color: @tab-background-color-active;
+  @line-color: @text-color;
+  @box-color: @text-color;
+  //@box-outline-color: @tab-border-color;
+  @box-outline-color: @tab-background-color;
+
+  svg.railroad-diagram {
+    stroke: @line-color;
+    fill: @non-terminal-text-color;
+
+    path {
+        stroke-width: 2;
+        fill: rgba(0,0,0,0);
+    }
+
+    text {
+      font-size: @font-size;
+      font-family: @font-family;
+      stroke-width: 0;
+
+    //  font: bold 14px monospace;
+      text-anchor: middle;
+    }
+
+    text.label {
+      text-anchor: start;
+    }
+
+    text.comment {
+      font-size: @font-size;
+      font-family: @font-family;
+      fill: @text-color;
+    }
+
+    rect {
+      stroke-width: 3;
+      stroke: @box-outline-color;
+      fill: @box-color;
+    }
+
+    rect.group {
+      fill: rgba(0,0,0,0);
+      stroke-dash-array: 10 5;
+    }
+  }
+}
