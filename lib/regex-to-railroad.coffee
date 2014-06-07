@@ -75,8 +75,41 @@ rx2rr = (node, options) ->
          "positive-lookbehind", "negative-lookbehind"
       Group rx2rr(node.body), Comment(node.type)
 
+    when "back-reference"
+      NonTerminal("ref #{node.index}")
+
+    when "literal"
+      if node.body == " "
+        NonTerminal("SP")
+      else
+        Terminal(node.body)
+
+    when "word"
+      NonTerminal("word-character")
+
+    when "non-word"
+      NonTerminal("non-word-character")
+
+    when "line-feed"
+      NonTermal("LF")
+
+    when "carriage-return"
+      NonTermal("CR")
+
+    when "form-feed"
+      NonTermal("FF")
+
+    when "back-space"
+      NonTermal("BS")
+
+    when "digit"
+      NonTermal("0-9")
+
+    when "white-space"
+      NonTermal("WS")
+
     else
-      return NonTerminal(node.type)
+      NonTerminal(node.type)
 
       # any-character
       # backspace
@@ -94,7 +127,6 @@ rx2rr = (node, options) ->
       # word
       # non-word
       # ! control-character (not supported)
-      # back-reference
       # octal \000
       # hex   \x...
       # unicode \u...

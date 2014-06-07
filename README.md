@@ -1,5 +1,14 @@
 # regex-railroad-diagram package
 
-A short description of your package.
+A regular expression railroad diagram view for regular expression 
+under cursor.  This is still in development and for me it is a test of
+graphics capabilities of Atom.
 
-![A screenshot of your spankin' package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![regex-railraod-diagram in action](https://raw.githubusercontent.com/klorenz/atom-regex-railroad-diagrams/master/regex-railroad-diagrams.png)
+
+It also shows you a parsing error message, if your regex is not syntactically
+correct.
+
+For now it only supports most common regex features, but there are more 
+to come.
+
