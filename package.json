@@ -1,7 +1,7 @@
 {
   "name": "regex-railroad-diagram",
   "main": "./lib/regex-railroad-diagram",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A short description of your package",
   "repository": "https://github.com/klorenz/atom-regex-railroad-diagrams",
   "license": "MIT",
