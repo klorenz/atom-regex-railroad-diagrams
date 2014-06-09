@@ -91,22 +91,22 @@ rx2rr = (node, options) ->
       NonTerminal("non-word-character")
 
     when "line-feed"
-      NonTermal("LF")
+      NonTerminal("LF")
 
     when "carriage-return"
-      NonTermal("CR")
+      NonTerminal("CR")
 
     when "form-feed"
-      NonTermal("FF")
+      NonTerminal("FF")
 
     when "back-space"
-      NonTermal("BS")
+      NonTerminal("BS")
 
     when "digit"
-      NonTermal("0-9")
+      NonTerminal("0-9")
 
     when "white-space"
-      NonTermal("WS")
+      NonTerminal("WS")
 
     else
       NonTerminal(node.type)

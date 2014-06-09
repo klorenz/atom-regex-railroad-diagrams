@@ -17,6 +17,7 @@ class RegexRailroadDiagramView extends View
 
   updateRailRoadDiagram: () =>
     editor = atom.workspace.getActiveEditor()
+    return if not editor?
     range = editor.bufferRangeForScopeAtCursor("string.regexp")
     console.log "cursor moved", range
     if not range
@@ -62,7 +63,7 @@ class RegexRailroadDiagramView extends View
       if /^string\.regexp/.test name
         scopeName
 
-    x = /hello(or|foo|bar|(?:foo|bar)?)x{4,}/
+    x = /hello(or|foo|bar|(?:fo|bar)?)x{4,}/
 
     false
 
