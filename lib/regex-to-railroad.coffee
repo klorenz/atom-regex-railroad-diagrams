@@ -103,10 +103,31 @@ rx2rr = (node, options) ->
       NonTerminal("BS")
 
     when "digit"
-      NonTerminal("0-9")
+      Terminal("0-9")
 
     when "white-space"
       NonTerminal("WS")
+
+    when "range"
+      Terminal(node.text)
+
+    when "charset"
+      charset = (x.text for x in node.body)
+
+      if charset.length == 1
+        if node.invert
+          return Terminal("not #{charset[0]}")
+        else
+          return Terminal(charset[0])
+      else
+        list = charset[0...-1].join(", ")
+        if node.invert
+          return Terminal("not #{list} and #{charset[-1..]}")
+        else
+          return Terminal("#{list} or #{charset[-1..]}")
+
+    when "hex", "octal", "unicode"
+      Terminal(node.text)
 
     else
       NonTerminal(node.type)

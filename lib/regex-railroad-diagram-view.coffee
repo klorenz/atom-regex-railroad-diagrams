@@ -7,7 +7,7 @@ class RegexRailroadDiagramView extends View
     @div class: 'regex-railroad-diagram'
 
   initialize: (serializeState) ->
-    console.log "hello from rr"
+    #console.log "hello from rr"
 
     @isVisible    = false
     @currentRegex = null
@@ -19,7 +19,7 @@ class RegexRailroadDiagramView extends View
     editor = atom.workspace.getActiveEditor()
     return if not editor?
     range = editor.bufferRangeForScopeAtCursor("string.regexp")
-    console.log "cursor moved", range
+    #console.log "cursor moved", range
     if not range
       if @isVisible
         @hideRailRoadDiagram()
@@ -35,7 +35,7 @@ class RegexRailroadDiagramView extends View
         try
           @showRailRoadDiagram(text)
         catch error
-          console.log error
+          #console.log error
           if not @isVisible
             @showRailRoadDiagram("")
 
@@ -46,7 +46,6 @@ class RegexRailroadDiagramView extends View
               @pre "#{text}\n#{sp}^\n#{sp}#{error.message}", class: "text-error"
 
     @currentRegex = text
-
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -63,7 +62,7 @@ class RegexRailroadDiagramView extends View
       if /^string\.regexp/.test name
         scopeName
 
-    x = /hello(or|foo|bar|(?:fo|bar)?)x{4,}/
+    x = /hello(or|foo|[A-Za-z]ar|(?:fo|bar\d)?)\x20x{4,}/
 
     false
 
@@ -95,7 +94,7 @@ class RegexRailroadDiagramView extends View
     #
 
   toggle: ->
-    console.log "RegexRailroadDiagramView was toggled!"
+    #console.log "RegexRailroadDiagramView was toggled!"
 
     statusBar = atom.workspaceView.find('.status-bar')
 
