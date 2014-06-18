@@ -26,9 +26,19 @@ class RegexRailroadDiagramView extends View
         @currentRegex = null
     else
       text = editor.getTextInBufferRange(range)
-      m = /^\/(.*)\/\w*$/.exec(text)
+      #console.log text
+      text = text.replace(/^\s+/, "").replace(/\s+$/, "")
+      #if te
+      m = /^\/\/\/(.*)\/\/\/\w*$/.exec(text)
       if m?
-        text = m[1]
+        text = m[1].replace(/\s+/, "")
+      else
+        m = /^\/(.*)\/\w*$/.exec(text)
+        if m?
+          text = m[1]
+
+      foo =
+        /abc/
 
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
@@ -62,10 +72,7 @@ class RegexRailroadDiagramView extends View
       if /^string\.regexp/.test name
         scopeName
 
-    x = /hello(or|foo|[A-Za-z]ar|(?:fo|bar\d)?)\x20x{4,}/
-
     false
-
 
   showRailRoadDiagram: (regex) ->
     rr = atom.workspaceView.find '.regex-railroad-diagram'

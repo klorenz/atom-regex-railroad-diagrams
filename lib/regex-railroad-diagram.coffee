@@ -4,7 +4,7 @@ module.exports =
   regexRailroadDiagramView: null
 
   activate: (state) ->
-    console.log "railroad diagram activated"
+    #console.log "railroad diagram activated"
     @regexRailroadDiagramView = new RegexRailroadDiagramView(state.regexRailroadDiagramViewState)
     #@regexRailroadDiagramView = new RegexRailroadDiagramView()
 
