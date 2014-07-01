@@ -16,6 +16,11 @@ grammar =
           {min, max} = quantifier
           if min == 0
             ZeroOrMore(0, regex, Comment("#{max} times"))
+          else if min == max
+            if min == 1
+              OneOrMore(0, regex, Comment("once"))
+            else
+              OneOrMore(0, regex, Comment("#{max} times"))
           else
             OneOrMore(0, regex, Comment("#{min} to #{max} times"))
         o "(?= Regex )", (regex) -> Sequence(0, regex, Comment("Lookahead")) # maybe we pass some extra classed for getting this boxed
