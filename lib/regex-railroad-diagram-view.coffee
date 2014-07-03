@@ -48,7 +48,6 @@ class RegexRailroadDiagramView extends View
       if m?
         text = m[2]
 
-      #if te
       m = /^\/\/\/(.*)\/\/\/\w*$/.exec(text)
       if m?
         text = m[1].replace(/\s+/, "")
@@ -56,7 +55,6 @@ class RegexRailroadDiagramView extends View
         m = /^\/(.*)\/\w*$/.exec(text)
         if m?
           text = m[1]
-
 
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
