@@ -18,7 +18,15 @@ class RegexRailroadDiagramView extends View
   updateRailRoadDiagram: () =>
     editor = atom.workspace.getActiveEditor()
     return if not editor?
-    range = editor.bufferRangeForScopeAtCursor("string.regexp")
+
+    # python uses raw-regex (must be before other, because python grammar
+    # also uses regexp for char classes)
+    range = editor.bufferRangeForScopeAtCursor(".raw-regex")
+
+    unless range
+      # usually somewhere there is .regexp in scope name
+      range = editor.bufferRangeForScopeAtCursor(".regexp")
+
     #console.log "cursor moved", range
     if not range
       if @isVisible
@@ -28,6 +36,12 @@ class RegexRailroadDiagramView extends View
       text = editor.getTextInBufferRange(range)
       #console.log text
       text = text.replace(/^\s+/, "").replace(/\s+$/, "")
+
+      # python regex
+      m = /^r('''|"""|"|')(.*)\1$/.exec(text)
+      if m?
+        text = m[2]
+
       #if te
       m = /^\/\/\/(.*)\/\/\/\w*$/.exec(text)
       if m?
@@ -36,9 +50,6 @@ class RegexRailroadDiagramView extends View
         m = /^\/(.*)\/\w*$/.exec(text)
         if m?
           text = m[1]
-
-      foo =
-        /abc/
 
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
