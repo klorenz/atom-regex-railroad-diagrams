@@ -3,6 +3,28 @@ parse = require "regexp"
 {Diagram, Sequence, Choice, Optional, OneOrMore, ZeroOrMore, Terminal,
  NonTerminal, Comment, Skip, Group } = require './railroad-diagrams'
 
+makeLiteral = (text) ->
+  #debugger
+  if text == " "
+    NonTerminal("SP")
+  else
+    parts = text.split /(^ +| {2,}| +$)/
+    sequence = []
+    for part in parts
+      continue unless part.length
+      if /^ +$/.test(part)
+        if part.length == 1
+          sequence.push NonTerminal("SP")
+        else
+          sequence.push OneOrMore(NonTerminal("SP"), Comment("#{part.length} times"))
+      else
+        sequence.push Terminal(part)
+
+    if sequence.length == 1
+      sequence[0]
+    else
+      new Sequence sequence
+
 rx2rr = (node, options) ->
   switch node.type
     when "match"
@@ -17,13 +39,13 @@ rx2rr = (node, options) ->
             literal = n.body
         else
           if literal?
-            sequence.push Terminal(literal)
+            sequence.push makeLiteral(literal)
             literal = null
 
           sequence.push rx2rr n
 
       if literal?
-        sequence.push Terminal(literal)
+        sequence.push makeLiteral(literal)
 
       if sequence.length == 1
         sequence[0]
@@ -82,10 +104,7 @@ rx2rr = (node, options) ->
       NonTerminal("ref #{node.index}")
 
     when "literal"
-      if node.body == " "
-        NonTerminal("SP")
-      else
-        Terminal(node.body)
+      makeLiteral(node.body)
 
     when "word"
       NonTerminal("word-character")
@@ -118,16 +137,26 @@ rx2rr = (node, options) ->
       charset = (x.text for x in node.body)
 
       if charset.length == 1
+        char = charset[0]
+
+        if char == " "
+          char = "SP"
+
         if node.invert
-          return Terminal("not #{charset[0]}")
+          return NonTerminal("not #{charset[0]}")
         else
           return Terminal(charset[0])
       else
         list = charset[0...-1].join(", ")
+
+        for x,i in list
+          if x == " "
+            list[i] = "SP"
+
         if node.invert
-          return Terminal("not #{list} and #{charset[-1..]}")
+          return NonTerminal("not #{list} and #{charset[-1..]}")
         else
-          return Terminal("#{list} or #{charset[-1..]}")
+          return NonTerminal("#{list} or #{charset[-1..]}")
 
     when "hex", "octal", "unicode"
       Terminal(node.text)
