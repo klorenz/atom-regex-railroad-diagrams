@@ -37,6 +37,12 @@ class RegexRailroadDiagramView extends View
       #console.log text
       text = text.replace(/^\s+/, "").replace(/\s+$/, "")
 
+      # special case, maybe we get a comment, but it might be already
+      # marked as regex by language grammar, although it might result in
+      # a comment
+      if text.length == 1 and text == "/"
+        return
+
       # python regex
       m = /^r('''|"""|"|')(.*)\1$/.exec(text)
       if m?
@@ -50,6 +56,7 @@ class RegexRailroadDiagramView extends View
         m = /^\/(.*)\/\w*$/.exec(text)
         if m?
           text = m[1]
+
 
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
