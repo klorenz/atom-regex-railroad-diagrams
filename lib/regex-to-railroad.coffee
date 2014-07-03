@@ -75,17 +75,23 @@ rx2rr = (node, options) ->
           if max is 1
             Optional(body)
           else
-            if max != Infinity
+            if max == 0
+              ZeroOrMore(body, Comment("#{max} times"))
+            else if max != Infinity
               ZeroOrMore(body, Comment("0 to #{max} times"))
             else
               ZeroOrMore(body)
         when 1
-          if max != Infinity
+          if max == 1
+            OneOrMore(body, Comment("once"))
+          else if max != Infinity
             OneOrMore(body, Comment("1 to #{max} times"))
           else
             OneOrMore(body)
         else
-          if max != Infinity
+          if max == min
+            OneOrMore(body, Comment("#{max} times"))
+          else if max != Infinity
             OneOrMore(body, Comment("#{min} to #{max} times"))
           else
             OneOrMore(body, Comment("at least #{min} times"))
