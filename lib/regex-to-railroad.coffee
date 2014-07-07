@@ -68,7 +68,7 @@ rx2rr = (node, options) ->
       body = rx2rr node.body
 
       throw new Error("Minimum quantifier (#{min}) must be lower than "
-          + "maximum quantifier (#{max})") unless min < max
+          + "maximum quantifier (#{max})") unless min <= max
 
       switch min
         when 0
