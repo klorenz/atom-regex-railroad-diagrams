@@ -19,13 +19,19 @@ class RegexRailroadDiagramView extends View
     editor = atom.workspace.getActiveEditor()
     return if not editor?
 
+    flavour = "python"
+
     # python uses raw-regex (must be before other, because python grammar
     # also uses regexp for char classes)
     range = editor.bufferRangeForScopeAtCursor(".raw-regex")
 
     unless range
+      range = editor.bufferRangeForScopeAtCursor(".unicode-raw-regex")
+
+    unless range
       # usually somewhere there is .regexp in scope name
       range = editor.bufferRangeForScopeAtCursor(".regexp")
+      flavour = "regexp"
 
     #console.log "cursor moved", range
     if not range
@@ -44,7 +50,7 @@ class RegexRailroadDiagramView extends View
         return
 
       # python regex
-      m = /^r('''|"""|"|')(.*)\1$/.exec(text)
+      m = /^u?r('''|"""|"|')(.*)\1$/.exec(text)
       if m?
         text = m[2]
 
@@ -59,11 +65,11 @@ class RegexRailroadDiagramView extends View
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
         try
-          @showRailRoadDiagram(text)
+          @showRailRoadDiagram(text, flavour)
         catch error
           #console.log error
           if not @isVisible
-            @showRailRoadDiagram("")
+            @showRailRoadDiagram("", flavour)
 
           sp = " ".repeat(error.offset)
 
@@ -90,7 +96,7 @@ class RegexRailroadDiagramView extends View
 
     false
 
-  showRailRoadDiagram: (regex) ->
+  showRailRoadDiagram: (regex, flavour) ->
     rr = atom.workspaceView.find '.regex-railroad-diagram'
     if not rr.length
       # create current diff
@@ -100,7 +106,7 @@ class RegexRailroadDiagramView extends View
       atom.workspaceView.getActivePaneView().parents('.panes').eq(0).after(@)
 
     @children().remove()
-    Regex2RailRoadDiagram(regex, @.get(0))
+    Regex2RailRoadDiagram(regex, @.get(0), flavour: flavour)
 
     @show()
     @isVisible = true

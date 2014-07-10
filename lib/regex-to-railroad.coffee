@@ -26,13 +26,16 @@ makeLiteral = (text) ->
       new Sequence sequence
 
 rx2rr = (node, options) ->
+#  debugger
   switch node.type
     when "match"
+      #debugger
+
       literal = null
       sequence = []
 
       for n in node.body
-        if n.type is "literal"
+        if n.type is "literal" and not n.escaped
           if literal?
             literal += n.body
           else
@@ -42,7 +45,7 @@ rx2rr = (node, options) ->
             sequence.push makeLiteral(literal)
             literal = null
 
-          sequence.push rx2rr n
+          sequence.push rx2rr n, options
 
       if literal?
         sequence.push makeLiteral(literal)
@@ -55,17 +58,17 @@ rx2rr = (node, options) ->
     when "alternate"
       alternatives = []
       while node.type is "alternate"
-        alternatives.push rx2rr node.left
+        alternatives.push rx2rr node.left, options
         node = node.right
 
-      alternatives.push rx2rr node
+      alternatives.push rx2rr node, options
 
       new Choice Math.floor(alternatives.length/2)-1, alternatives
 
     when "quantified"
       {min, max} = node.quantifier
 
-      body = rx2rr node.body
+      body = rx2rr node.body, options
 
       throw new Error("Minimum quantifier (#{min}) must be lower than "
           + "maximum quantifier (#{max})") unless min <= max
@@ -97,20 +100,23 @@ rx2rr = (node, options) ->
             OneOrMore(body, Comment("at least #{min} times"))
 
     when "capture-group"
-      Group rx2rr(node.body), Comment("capture #{node.index}")
+      Group rx2rr(node.body, options), Comment("capture #{node.index}")
 
     when "non-capture-group"
-      Group rx2rr(node.body)
+      Group rx2rr(node.body, options)
 
     when "positive-lookahead", "negative-lookahead", \
          "positive-lookbehind", "negative-lookbehind"
-      Group rx2rr(node.body), Comment(node.type)
+      Group rx2rr(node.body, options), Comment(node.type)
 
     when "back-reference"
       NonTerminal("ref #{node.index}")
 
     when "literal"
-      makeLiteral(node.body)
+      if node.escaped
+        Terminal("\\"+node.body)
+      else
+        makeLiteral(node.body)
 
     when "word"
       NonTerminal("word-character")
@@ -198,7 +204,7 @@ parseRegex = (regex) ->
   parse regex
 
 module.exports =
-  Regex2RailRoadDiagram: (regex, parent) ->
-    Diagram(rx2rr(parseRegex(regex))).addTo(parent)
+  Regex2RailRoadDiagram: (regex, parent, opts) ->
+    Diagram(rx2rr(parseRegex(regex), opts)).addTo(parent)
 
   ParseRegex: parseRegex
