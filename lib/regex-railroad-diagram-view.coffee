@@ -49,18 +49,28 @@ class RegexRailroadDiagramView extends View
       if text.length == 1 and text == "/"
         return
 
-      # python regex
-      m = /^u?r('''|"""|"|')(.*)\1$/.exec(text)
-      if m?
-        text = m[2]
-
-      m = /^\/\/\/(.*)\/\/\/\w*$/.exec(text)
-      if m?
-        text = m[1].replace(/\s+/, "")
-      else
-        m = /^\/(.*)\/\w*$/.exec(text)
+      # php has regexp strings (including "")
+      if editor.bufferRangeForScopeAtCursor(".php")
+        m = /^"\/(.*)\/\w*"$/.exec(text)
         if m?
           text = m[1]
+        else
+          m = /^'\/(.*)\/\w*'$/.exec(text)
+          text = m[1] if m?
+
+      else
+        # python regex
+        m = /^u?r('''|"""|"|')(.*)\1$/.exec(text)
+        if m?
+          text = m[2]
+
+        m = /^\/\/\/(.*)\/\/\/\w*$/.exec(text)
+        if m?
+          text = m[1].replace(/\s+/, "")
+        else
+          m = /^\/(.*)\/\w*$/.exec(text)
+          if m?
+            text = m[1]
 
       if not @isVisible or @currentRegex != text
         @.find('div.error-message').remove()
