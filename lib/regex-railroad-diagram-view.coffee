@@ -12,8 +12,9 @@ class RegexRailroadDiagramView extends View
     @isVisible    = false
     @currentRegex = null
 
-    #atom.workspaceView.command "regex-railroad-diagram:toggle", => @toggle()
-    atom.workspaceView.on 'cursor:moved', @updateRailRoadDiagram
+    #@view.command "regex-railroad-diagram:toggle", => @toggle()
+    @view = atom.views.getView(atom.workspace).__spacePenView
+    @view.on 'cursor:moved', @updateRailRoadDiagram
 
   updateRailRoadDiagram: () =>
     editor = atom.workspace.getActiveEditor()
@@ -107,13 +108,13 @@ class RegexRailroadDiagramView extends View
     false
 
   showRailRoadDiagram: (regex, flavour) ->
-    rr = atom.workspaceView.find '.regex-railroad-diagram'
+    rr = @view.find '.regex-railroad-diagram'
     if not rr.length
       # create current diff
       @hide()
 
       # append to "panes"
-      atom.workspaceView.getActivePaneView().parents('.panes').eq(0).after(@)
+      @view.getActivePaneView().parents('.panes').eq(0).after(@)
 
     @children().remove()
     Regex2RailRoadDiagram(regex, @.get(0), flavour: flavour)
@@ -135,7 +136,7 @@ class RegexRailroadDiagramView extends View
   toggle: ->
     #console.log "RegexRailroadDiagramView was toggled!"
 
-    statusBar = atom.workspaceView.find('.status-bar')
+    statusBar = @view.find('.status-bar')
 
     if statusBar.length > 0
       @insertBefore(statusBar)
