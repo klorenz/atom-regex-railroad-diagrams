@@ -1,4 +1,7 @@
-## 0.6.4
+## 0.7.1
+- fix CHANGELOG, because mistakenly made a minor version step instead of patch
+
+## 0.7.0
 - Merge pull request #29 from imperez/atom-regex-railroad-diagrams to fix issue #27
 
 ## 0.6.3
