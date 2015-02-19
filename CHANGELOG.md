@@ -1,3 +1,6 @@
+## 0.6.4
+- Merge pull request #29 from imperez/atom-regex-railroad-diagrams to fix issue #27
+
 ## 0.6.3
 - fix issue #16
 
