@@ -1,3 +1,7 @@
+## 0.7.2
+- fix issue #25
+- fix issue #20
+
 ## 0.7.1
 - fix CHANGELOG, because mistakenly made a minor version step instead of patch
 

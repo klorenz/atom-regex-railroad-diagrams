@@ -11,14 +11,28 @@ class RegexRailroadDiagramView extends View
 
     @isVisible    = false
     @currentRegex = null
+    @currentEditor = null
 
     #@view.command "regex-railroad-diagram:toggle", => @toggle()
     @view = atom.views.getView(atom.workspace).__spacePenView
-    @view.on 'cursor:moved', @updateRailRoadDiagram
+
+    atom.workspace.observeTextEditors (editor) =>
+      editor.onDidChangeCursorPosition (event) =>
+        @updateRailRoadDiagram()
+
+      editor.onDidDestroy =>
+        if @currentEditor is editor and @currentRegex
+          @hideRailRoadDiagram()
+
+
+#    @view.on 'cursor:moved', @updateRailRoadDiagram
+
 
   updateRailRoadDiagram: () =>
     editor = atom.workspace.getActiveEditor()
     return if not editor?
+
+    @currentEditor = editor
 
     flavour = "python"
 
@@ -144,7 +158,6 @@ class RegexRailroadDiagramView extends View
       atom.workspace.getActivePane().append(@)
 
     Diagram(
-
         Choice(0, Skip(), '-'),
         Choice(0, NonTerminal('name-start char'), NonTerminal('escape')),
         ZeroOrMore(

@@ -114,7 +114,8 @@ rx2rr = (node, options) ->
 
     when "literal"
       if node.escaped
-        Terminal("\\"+node.body)
+        #Terminal("\\"+node.body)
+        Terminal(node.body)
       else
         makeLiteral(node.body)
 
