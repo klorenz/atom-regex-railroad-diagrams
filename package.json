@@ -9,7 +9,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "regexp": "https://github.com/klorenz/regexp.git",
-    "railroad-diagrams": "https://github.com/klorenz/railroad-diagrams.git"
+    "regexp": "git://github.com/klorenz/regexp.git",
+    "railroad-diagrams": "git://github.com/klorenz/railroad-diagrams.git"
   }
 }
