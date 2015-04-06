@@ -1,5 +1,5 @@
-{View, $$} = require 'atom'
 {Regex2RailRoadDiagram} = require './regex-to-railroad'
+{$$, View} = require "atom-space-pen-views"
 
 module.exports =
 class RegexRailroadDiagramView extends View
@@ -29,7 +29,7 @@ class RegexRailroadDiagramView extends View
 
 
   updateRailRoadDiagram: () =>
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
     return if not editor?
 
     @currentEditor = editor

@@ -1,3 +1,10 @@
+## 0.7.4
+- require $$ and View from space-pen-views fixing #36 and #35, #33 and #32
+- use getActiveTextEditor fixing #34
+
+## 0.7.3
+- fix issue #31 (broken installation)
+
 ## 0.7.2
 - fix issue #25
 - fix issue #20
