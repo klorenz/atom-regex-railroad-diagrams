@@ -66,7 +66,7 @@ rx2rr = (node, options) ->
       new Choice Math.floor(alternatives.length/2)-1, alternatives
 
     when "quantified"
-      {min, max} = node.quantifier
+      {min, max, greedy} = node.quantifier
 
       body = rx2rr node.body, options
 
@@ -79,25 +79,25 @@ rx2rr = (node, options) ->
             Optional(body)
           else
             if max == 0
-              ZeroOrMore(body, Comment("#{max} times"))
+              ZeroOrMore(body, quantifiedComment("#{max} times", greedy))
             else if max != Infinity
-              ZeroOrMore(body, Comment("0 to #{max} times"))
+              ZeroOrMore(body, quantifiedComment("0 to #{max} times", greedy))
             else
-              ZeroOrMore(body)
+              ZeroOrMore(body, quantifiedComment("", greedy))
         when 1
           if max == 1
             OneOrMore(body, Comment("once"))
           else if max != Infinity
-            OneOrMore(body, Comment("1 to #{max} times"))
+            OneOrMore(body, quantifiedComment("1 to #{max} times", greedy))
           else
-            OneOrMore(body)
+            OneOrMore(body, quantifiedComment("", greedy))
         else
           if max == min
             OneOrMore(body, Comment("#{max} times"))
           else if max != Infinity
-            OneOrMore(body, Comment("#{min} to #{max} times"))
+            OneOrMore(body, quantifiedComment("#{min} to #{max} times", greedy))
           else
-            OneOrMore(body, Comment("at least #{min} times"))
+            OneOrMore(body, quantifiedComment("at least #{min} times", greedy))
 
     when "capture-group"
       Group rx2rr(node.body, options), Comment("capture #{node.index}")
@@ -197,6 +197,14 @@ rx2rr = (node, options) ->
       # hex   \x...
       # unicode \u...
       # null-character
+
+quantifiedComment = (comment, greedy) ->
+  if comment and greedy
+    Comment(comment + ' (greedy)')
+  else if greedy
+    Comment('greedy')
+  else if comment
+    Comment(comment)
 
 parseRegex = (regex) ->
   if regex instanceof RegExp
