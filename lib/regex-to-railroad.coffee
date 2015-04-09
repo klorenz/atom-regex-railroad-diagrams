@@ -204,7 +204,9 @@ quantifiedComment = (comment, greedy) ->
   else if greedy
     Comment('greedy')
   else if comment
-    Comment(comment)
+    Comment(comment + '(lazy)')
+  else
+    Comment('lazy')
 
 parseRegex = (regex) ->
   if regex instanceof RegExp
