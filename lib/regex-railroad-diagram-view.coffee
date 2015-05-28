@@ -38,14 +38,14 @@ class RegexRailroadDiagramView extends View
 
     # python uses raw-regex (must be before other, because python grammar
     # also uses regexp for char classes)
-    range = editor.bufferRangeForScopeAtCursor(".raw-regex")
+    range = editor.bufferRangeForScopeAtCursor("source.python string.quoted.*.*.raw-regex")
 
     unless range
-      range = editor.bufferRangeForScopeAtCursor(".unicode-raw-regex")
+      range = editor.bufferRangeForScopeAtCursor("source.python string.quoted.*.*.unicode-raw-regex")
 
     unless range
       # usually somewhere there is .regexp in scope name
-      range = editor.bufferRangeForScopeAtCursor(".regexp")
+      range = editor.bufferRangeForScopeAtCursor("string.regexp")
       flavour = "regexp"
 
     #console.log "cursor moved", range
@@ -65,7 +65,7 @@ class RegexRailroadDiagramView extends View
         return
 
       # php has regexp strings (including "")
-      if editor.bufferRangeForScopeAtCursor(".php")
+      if editor.bufferRangeForScopeAtCursor("source.php")
         m = /^"\/(.*)\/\w*"$/.exec(text)
         if m?
           text = m[1]
