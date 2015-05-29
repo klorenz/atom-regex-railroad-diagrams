@@ -3,6 +3,8 @@
 
 module.exports =
 class RegexRailroadDiagramView extends View
+  MATCH_PAIRS = '(': ')', '[': ']', '{': '}', '<': '>'
+
   @content: ->
     @div class: 'regex-railroad-diagram'
 
@@ -72,6 +74,23 @@ class RegexRailroadDiagramView extends View
         else
           m = /^'\/(.*)\/\w*'$/.exec(text)
           text = m[1] if m?
+
+      else if editor.bufferRangeForScopeAtCursor("source.ruby")
+        m = /^%r(.)(.*)(\W)(\w*)$/.exec(text)
+        if m?
+          text = m[2]
+          [open, close] = [m[1], m[3]]
+          expectedClose = MATCH_PAIRS[open] || open
+          if close != expectedClose
+            # there is no matching pair, use whole remaining string as regex
+            text = text + close + m[4]
+            close = expectedClose
+          regexForEscaped = new RegExp("\\\\(#{open}|#{close})", 'g')
+          text = text.replace(/\//g, '\\/').replace(regexForEscaped, '$1')
+        else
+          m = /^\/(.*)\/\w*$/.exec(text)
+          if m?
+            text = m[1]
 
       else
         # python regex
