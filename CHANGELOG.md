@@ -1,3 +1,7 @@
+## 0.8.0
+- make rrd work with curren atom (0.209.0)
+- better extracting of regexes (make use of punctuation scope names)
+
 ## 0.7.4
 - require $$ and View from space-pen-views fixing #36 and #35, #33 and #32
 - use getActiveTextEditor fixing #34
