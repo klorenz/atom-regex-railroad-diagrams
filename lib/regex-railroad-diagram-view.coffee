@@ -1,5 +1,6 @@
 {Regex2RailRoadDiagram} = require './regex-to-railroad'
 {$$, View} = require "atom-space-pen-views"
+{Range} = require 'atom'
 
 module.exports =
 class RegexRailroadDiagramView extends View
@@ -27,26 +28,61 @@ class RegexRailroadDiagramView extends View
 
 #    @view.on 'cursor:moved', @updateRailRoadDiagram
 
+  bufferRangeForScope: (scope, position=null) ->
+    editor = @currentEditor
+    if position?
+      result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+    else
+      result = editor.bufferRangeForScopeAtCursor(scope)
+    return result
 
-  updateRailRoadDiagram: () =>
+  regexBufferRange: () ->
+    # python uses raw-regex (must be before other, because python grammar
+    # also uses regexp for char classes)
+    flavour = "python"
+
+    range = @bufferRangeForScope(".raw-regex")
+
+    unless range
+      range = @bufferRangeForScope(".unicode-raw-regex")
+
+    unless range
+      # usually somewhere there is .regexp in scope name
+      range = @bufferRangeForScope(".regexp")
+      flavour = "regexp"
+
+    if range
+      # skip 'r' in python strings like r'''...'''
+      while startRange = @bufferRangeForScope(".storage.type.string.python", range.start)
+        break if range.start.isEqual startRange.end
+        range = new Range(startRange.end, range.end)
+
+      # skip punctuation
+      while startRange = @bufferRangeForScope(".punctuation", range.start)
+        #debugger
+        break if range.start.isEqual startRange.end
+        range = new Range(startRange.end, range.end)
+
+      console.log("range.end: #{range.end}")
+
+#      debugger
+      while endRange = @bufferRangeForScope(".punctuation", [range.end.row, range.end.column - 1])
+        console.log("endRange: #{endRange}")
+
+        break if range.end.isEqual endRange.start
+        range = new Range(range.start, endRange.start)
+        console.log("_range: #{range}")
+
+    return [range, flavour]
+
+
+  updateRailRoadDiagram: () ->
     editor = atom.workspace.getActiveTextEditor()
     return if not editor?
 
     @currentEditor = editor
 
-    flavour = "python"
-
-    # python uses raw-regex (must be before other, because python grammar
-    # also uses regexp for char classes)
-    range = editor.bufferRangeForScopeAtCursor(".raw-regex")
-
-    unless range
-      range = editor.bufferRangeForScopeAtCursor(".unicode-raw-regex")
-
-    unless range
-      # usually somewhere there is .regexp in scope name
-      range = editor.bufferRangeForScopeAtCursor(".regexp")
-      flavour = "regexp"
+    [range, flavour] = @regexBufferRange()
 
     #console.log "cursor moved", range
     if not range
@@ -55,9 +91,11 @@ class RegexRailroadDiagramView extends View
         @currentRegex = null
     else
       text = editor.getTextInBufferRange(range)
+      console.log "regex text 1", text
       #console.log text
       text = text.replace(/^\s+/, "").replace(/\s+$/, "")
 
+      console.log "regex text 2", text
       # special case, maybe we get a comment, but it might be already
       # marked as regex by language grammar, although it might result in
       # a comment
