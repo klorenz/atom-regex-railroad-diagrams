@@ -6,7 +6,7 @@
   "repository": "https://github.com/klorenz/atom-regex-railroad-diagrams",
   "license": "MIT",
   "engines": {
-    "atom": ">0.50.0"
+    "atom": ">0.200.0"
   },
   "dependencies": {
     "regexp": "git://github.com/klorenz/regexp.git",
