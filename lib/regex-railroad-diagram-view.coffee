@@ -1,5 +1,5 @@
 {Regex2RailRoadDiagram} = require './regex-to-railroad'
-{$$, View} = require "atom-space-pen-views"
+{$$, View, $} = require "atom-space-pen-views"
 {Range} = require 'atom'
 
 module.exports =
@@ -17,7 +17,10 @@ class RegexRailroadDiagramView extends View
     @currentEditor = null
 
     #@view.command "regex-railroad-diagram:toggle", => @toggle()
-    @view = atom.views.getView(atom.workspace).__spacePenView
+    @view = atom.views.getView(atom.workspace)
+    @spView = $(@view)
+    #@view = atom.views.getView(atom.workspace).__spacePenView
+
 
     atom.workspace.observeTextEditors (editor) =>
       editor.onDidChangeCursorPosition (event) =>
@@ -145,7 +148,7 @@ class RegexRailroadDiagramView extends View
             text = m[1]
 
       if not @isVisible or @currentRegex != text
-        @.find('div.error-message').remove()
+        @spView.find('div.error-message').remove()
         try
           @showRailRoadDiagram(text, flavour)
         catch error
@@ -179,13 +182,15 @@ class RegexRailroadDiagramView extends View
     false
 
   showRailRoadDiagram: (regex, flavour) ->
-    rr = @view.find '.regex-railroad-diagram'
+    rr = @spView.find '.regex-railroad-diagram'
+
     if not rr.length
       # create current diff
       @hide()
 
       # append to "panes"
-      @view.getActivePaneView().parents('.panes').eq(0).after(@)
+      v = atom.views.getView(atom.workspace.getActivePane())
+      $(v).parents('.panes').eq(0).after(@)
 
     @children().remove()
     Regex2RailRoadDiagram(regex, @.get(0), flavour: flavour)
@@ -207,7 +212,7 @@ class RegexRailroadDiagramView extends View
   toggle: ->
     #console.log "RegexRailroadDiagramView was toggled!"
 
-    statusBar = @view.find('.status-bar')
+    statusBar = @spView.find('.status-bar')
 
     if statusBar.length > 0
       @insertBefore(statusBar)
