@@ -1,6 +1,7 @@
 {Regex2RailRoadDiagram} = require './regex-to-railroad'
 {$$, View, $} = require "atom-space-pen-views"
 {Range} = require 'atom'
+_ = require 'underscore-plus'
 
 module.exports =
 class RegexRailroadDiagramView extends View
@@ -21,10 +22,12 @@ class RegexRailroadDiagramView extends View
     @spView = $(@view)
     #@view = atom.views.getView(atom.workspace).__spacePenView
 
+    debouncedUpdateRailRoadDiagram = _.debounce =>
+      @updateRailRoadDiagram()
+    , 100
 
     atom.workspace.observeTextEditors (editor) =>
-      editor.onDidChangeCursorPosition (event) =>
-        @updateRailRoadDiagram()
+      editor.onDidChangeCursorPosition(debouncedUpdateRailRoadDiagram)
 
       editor.onDidDestroy =>
         if @currentEditor is editor and @currentRegex
