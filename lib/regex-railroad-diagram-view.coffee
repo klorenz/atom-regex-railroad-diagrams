@@ -68,15 +68,15 @@ class RegexRailroadDiagramView extends View
         break if range.start.isEqual startRange.end
         range = new Range(startRange.end, range.end)
 
-      console.log("range.end: #{range.end}")
+      #console.log("range.end: #{range.end}")
 
 #      debugger
       while endRange = @bufferRangeForScope(".punctuation", [range.end.row, range.end.column - 1])
-        console.log("endRange: #{endRange}")
+        #console.log("endRange: #{endRange}")
 
         break if range.end.isEqual endRange.start
         range = new Range(range.start, endRange.start)
-        console.log("_range: #{range}")
+        #console.log("_range: #{range}")
 
     return [range, flavour]
 
@@ -96,11 +96,11 @@ class RegexRailroadDiagramView extends View
         @currentRegex = null
     else
       text = editor.getTextInBufferRange(range)
-      console.log "regex text 1", text
+      #console.log "regex text 1", text
       #console.log text
       text = text.replace(/^\s+/, "").replace(/\s+$/, "")
 
-      console.log "regex text 2", text
+      #console.log "regex text 2", text
       # special case, maybe we get a comment, but it might be already
       # marked as regex by language grammar, although it might result in
       # a comment

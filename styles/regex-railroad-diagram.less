@@ -8,12 +8,12 @@
   background: @tab-bar-background-color;
   overflow-x: scroll;
 
-  @terminal-text-color: @tab-background-color;
-  @non-terminal-text-color: @tab-background-color-active;
-  @line-color: @text-color;
-  @box-color: @text-color;
+  @terminal-text-color: @text-color-highlight;
+  @non-terminal-text-color: @text-color;
+  @line-color: @text-color-highlight;
+  @box-color: @background-color-highlight;
   //@box-outline-color: @tab-border-color;
-  @box-outline-color: @tab-background-color;
+  @box-outline-color: @text-color-highlight;
 
   svg.railroad-diagram {
     stroke: @line-color;
@@ -28,6 +28,7 @@
       font-size: @font-size;
       font-family: @font-family;
       stroke-width: 0;
+      fill: @text-color-highlight;
 
     //  font: bold 14px monospace;
       text-anchor: middle;
