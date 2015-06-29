@@ -63,7 +63,7 @@ class RegexRailroadDiagramView extends View
         range = new Range(startRange.end, range.end)
 
       # skip punctuation
-      while startRange = @bufferRangeForScope(".punctuation", range.start)
+      while startRange = @bufferRangeForScope(".punctuation.section.regexp", range.start)
         #debugger
         break if range.start.isEqual startRange.end
         range = new Range(startRange.end, range.end)
@@ -71,7 +71,7 @@ class RegexRailroadDiagramView extends View
       #console.log("range.end: #{range.end}")
 
 #      debugger
-      while endRange = @bufferRangeForScope(".punctuation", [range.end.row, range.end.column - 1])
+      while endRange = @bufferRangeForScope(".punctuation.section.regexp", [range.end.row, range.end.column - 1])
         #console.log("endRange: #{endRange}")
 
         break if range.end.isEqual endRange.start
