@@ -149,6 +149,7 @@ rx2rr = (node, options) ->
     when "charset"
       charset = (x.text for x in node.body)
 
+
       if charset.length == 1
         char = charset[0]
 
