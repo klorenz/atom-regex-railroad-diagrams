@@ -1,3 +1,6 @@
+## 0.8.3
+- fix issue #41, add characterclass parsing
+
 ## 0.8.2
 - fix issue #48, thanks to lordjavac for hints on fixing
 - fix issue #47, using debounce now (thanks to aki77)
