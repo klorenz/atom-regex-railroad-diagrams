@@ -1,3 +1,6 @@
+## 0.8.4
+- fix issue #52, enable installation for atom behind proxy
+
 ## 0.8.3
 - fix issue #41, add characterclass parsing
 

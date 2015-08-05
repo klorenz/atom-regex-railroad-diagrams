@@ -9,8 +9,8 @@
     "atom": ">0.200.0"
   },
   "dependencies": {
-    "regexp": "git://github.com/klorenz/regexp.git",
-    "railroad-diagrams": "git://github.com/klorenz/railroad-diagrams.git",
+    "regexp": "git+https://github.com/klorenz/regexp.git",
+    "railroad-diagrams": "git+https://github.com/klorenz/railroad-diagrams.git",
     "atom-space-pen-views": "^2.0.3",
     "underscore-plus": "^1.6.6"
   }
