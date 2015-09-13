@@ -13,8 +13,13 @@ describe "RegexRailroadDiagram", ->
   activationPromise = null
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
+    workspaceElement = atom.views.getView(atom.workspace)
     activationPromise = atom.packages.activatePackage('regex-railroad-diagram')
+
+    waitsForPromise ->
+      activationPromise
+    runs ->
+      debugger
 
   describe "regex-to-railroad diagram converter", ->
 

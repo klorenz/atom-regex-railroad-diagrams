@@ -8,4 +8,5 @@ while (<>) {
   $variablename =~ /REGEX[:alnum:]/
   $variablename =~ /REGEX[[:alnum:]]/
   $variablename =~ m{\d+|\d+}
+  $variablename =~ s/REGEX[[:alnum:]]/foo/g
 }

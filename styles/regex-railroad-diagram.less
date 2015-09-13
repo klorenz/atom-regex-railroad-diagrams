@@ -4,9 +4,10 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-.regex-railroad-diagram {
+regex-railroad-diagram {
   background: @tab-bar-background-color;
   overflow-x: scroll;
+  display: block;
 
   @terminal-text-color: @text-color-highlight;
   @non-terminal-text-color: @text-color;
@@ -14,6 +15,11 @@
   @box-color: @background-color-highlight;
   //@box-outline-color: @tab-border-color;
   @box-outline-color: @text-color-highlight;
+
+  .error-message {
+    color: @text-color-error;
+    // background-color: @background-color-error;
+  }
 
   svg.railroad-diagram {
     stroke: @line-color;

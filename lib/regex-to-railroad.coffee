@@ -14,9 +14,9 @@ makeLiteral = (text) ->
       continue unless part.length
       if /^ +$/.test(part)
         if part.length == 1
-          sequence.push NonTerminal("SP")
+          sequence.push NonTerminal("SP", "Space character")
         else
-          sequence.push OneOrMore(NonTerminal("SP"), Comment("#{part.length} times"))
+          sequence.push OneOrMore(NonTerminal("SP", "Space character"), Comment("#{part.length} times"))
       else
         sequence.push Terminal(part)
 
@@ -29,13 +29,11 @@ rx2rr = (node, options) ->
 #  debugger
   switch node.type
     when "match"
-      #debugger
-
       literal = null
       sequence = []
 
       for n in node.body
-        if n.type is "literal" and not n.escaped
+        if n.type is "literal"  # and not n.escaped
           if literal?
             literal += n.body
           else
@@ -100,7 +98,7 @@ rx2rr = (node, options) ->
             OneOrMore(body, quantifiedComment("at least #{min} times", greedy))
 
     when "capture-group"
-      Group rx2rr(node.body, options), Comment("capture #{node.index}")
+      Group rx2rr(node.body, options), Comment("capture #{node.index}"), minWidth: 55
 
     when "non-capture-group"
       Group rx2rr(node.body, options)
@@ -110,7 +108,7 @@ rx2rr = (node, options) ->
       Group rx2rr(node.body, options), Comment(node.type)
 
     when "back-reference"
-      NonTerminal("ref #{node.index}")
+      NonTerminal("REF #{node.code}", "Back reference to capture #{node.code}")
 
     when "literal"
       if node.escaped
@@ -119,36 +117,56 @@ rx2rr = (node, options) ->
       else
         makeLiteral(node.body)
 
+    when "start"
+      NonTerminal("START", "Beginning of string")
+
+    when "end"
+      NonTerminal("END", "End of string")
+
     when "word"
-      NonTerminal("word-character")
+      NonTerminal("WORD", "Word character A-Z, 0-9, _")
 
     when "non-word"
-      NonTerminal("non-word-character")
+      NonTerminal("NON-WORD", "Non-word character, all except A-Z, 0-9, _")
 
     when "line-feed"
-      NonTerminal("LF")
+      NonTerminal("LF", "Line feed '\\n'")
 
     when "carriage-return"
-      NonTerminal("CR")
+      NonTerminal("CR", "Carriage Return '\\r'")
+
+    when "vertical-tab"
+      NonTerminal("VTAB", "Vertical tab '\\v'")
+
+    when "tab"
+      NonTerminal("TAB", "Tab stop '\\t'")
 
     when "form-feed"
-      NonTerminal("FF")
+      NonTerminal("FF", "Form feed")
 
     when "back-space"
-      NonTerminal("BS")
+      NonTerminal("BS", "Backspace")
 
     when "digit"
       Terminal("0-9")
 
+    when "null-character"
+      Terminal("NULL", "Null character '\\0'")
+
+    when "non-digit"
+      NonTerminal("not 0-9", "All except digits")
+
     when "white-space"
-      NonTerminal("WS")
+      NonTerminal("WS", "Whitespace: space, tabstop, linefeed, carriage-return, etc.")
+
+    when "non-white-space"
+      NonTerminal("NON-WS", "Not whitespace: all except space, tabstop, line-feed, carriage-return, etc.")
 
     when "range"
       Terminal(node.text)
 
     when "charset"
       charset = (x.text for x in node.body)
-
 
       if charset.length == 1
         char = charset[0]
@@ -175,14 +193,14 @@ rx2rr = (node, options) ->
     when "hex", "octal", "unicode"
       Terminal(node.text)
 
+    when "any-character"
+      NonTerminal("ANY", "Any character except Newline")
+
     else
       NonTerminal(node.type)
 
-      # any-character
-      # backspace
       # word-boundary
       # non-word-boundary
-      # digit
       # non-digit
       # form-feed
       # line-feed

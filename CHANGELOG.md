@@ -1,3 +1,8 @@
+## 0.9
+- complete redesign to use new style HTMLElement and addBottomPanel
+- improve handling of regexes (support perl's substitutions
+- more compact display with tooltips for more info on NonTerminals
+
 ## 0.8.4
 - fix issue #52, enable installation for atom behind proxy
 
