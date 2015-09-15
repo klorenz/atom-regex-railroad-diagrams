@@ -12,13 +12,18 @@ module.exports =
     @subscriptions = new CompositeDisposable
     @emitter       = new Emitter
 
-    atom.workspace.observeTextEditors (editor) =>
-      editor.onDidChangeCursorPosition debounce (=> @checkForRegExp()), 100
+    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+      @subscriptions.add editor.onDidChangeCursorPosition debounce (=> @checkForRegExp()), 100
+
+    #@subscriptions.add atom.workspace.onDidChangeActivePaneItem =>
+      # @element.assertHide()
+      #debounce (=> @checkForRegExp()), 100
 
     @element = (new RailroadDiagramElement).initialize this
 
   deactivate: ->
     #@regexRailroadDiagramView.destroy()
+    @subscriptions.dispose()
 
   serialize: ->
     #regexRailroadDiagramViewState: @regexRailroadDiagramView.serialize()
@@ -77,8 +82,8 @@ module.exports =
 
     debugger
 
-    if m = (flavour.match(/php/) and regex.match(/^"\/(.*)\/(\w*)"$/))
-      [regex, opts] = m[1..]
+    if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
+      [regex, opts] = m[2..]
     else if m = (flavour.match(/python/) and regex.match(/^u?r('''|"""|"|')(.*)\1$/))
       regex = m[2]
     else if m = (flavour.match(/coffee/) and regex.match(/^\/\/\/(.*)\/\/\/(\w*)/))

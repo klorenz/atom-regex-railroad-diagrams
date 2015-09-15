@@ -71,31 +71,33 @@ rx2rr = (node, options) ->
       throw new Error("Minimum quantifier (#{min}) must be lower than "
           + "maximum quantifier (#{max})") unless min <= max
 
+      plural = (x) -> if x != 1 then "s" else ""
+
       switch min
         when 0
           if max is 1
             Optional(body)
           else
             if max == 0
-              ZeroOrMore(body, quantifiedComment("#{max} times", greedy))
+              ZeroOrMore(body, quantifiedComment("0x", greedy, title: "exact 0 times repitition does not make sense"))
             else if max != Infinity
-              ZeroOrMore(body, quantifiedComment("0 to #{max} times", greedy))
+              ZeroOrMore(body, quantifiedComment("0-#{max}x", greedy, title: "repeat 0 to #{max} time" + plural(max)))
             else
-              ZeroOrMore(body, quantifiedComment("", greedy))
+              ZeroOrMore(body, quantifiedComment("*", greedy, title: "repeat zero or more times"))
         when 1
           if max == 1
-            OneOrMore(body, Comment("once"))
+            OneOrMore(body, Comment("1", title: "once"))
           else if max != Infinity
-            OneOrMore(body, quantifiedComment("1 to #{max} times", greedy))
+            OneOrMore(body, quantifiedComment("1-#{max}x", greedy, title: "repeat 1 to #{max} times"))
           else
-            OneOrMore(body, quantifiedComment("", greedy))
+            OneOrMore(body, quantifiedComment("+", greedy, title: "repeat at least one time"))
         else
           if max == min
-            OneOrMore(body, Comment("#{max} times"))
+            OneOrMore(body, Comment("#{max}x", title: "repeat #{max} times"))
           else if max != Infinity
-            OneOrMore(body, quantifiedComment("#{min} to #{max} times", greedy))
+            OneOrMore(body, quantifiedComment("#{min}-#{max}x", greedy, title: "repeat #{min} to #{max} times"))
           else
-            OneOrMore(body, quantifiedComment("at least #{min} times", greedy))
+            OneOrMore(body, quantifiedComment(">= #{min}x", greedy, title: "repeat at least #{min} time" + plural(min)))
 
     when "capture-group"
       Group rx2rr(node.body, options), Comment("capture #{node.index}"), minWidth: 55
@@ -108,7 +110,7 @@ rx2rr = (node, options) ->
       Group rx2rr(node.body, options), Comment(node.type)
 
     when "back-reference"
-      NonTerminal("REF #{node.code}", "Back reference to capture #{node.code}")
+      NonTerminal("#{node.code}", "Match capture #{node.code} (Back Reference)")
 
     when "literal"
       if node.escaped
@@ -217,15 +219,19 @@ rx2rr = (node, options) ->
       # unicode \u...
       # null-character
 
-quantifiedComment = (comment, greedy) ->
+quantifiedComment = (comment, greedy, attrs) ->
   if comment and greedy
-    Comment(comment + ' (greedy)')
+    attrs.title += ', longest possible match'
+    Comment(comment + ' (greedy)', attrs)
   else if greedy
-    Comment('greedy')
+    attrs.title = 'longest possible match'
+    Comment('greedy', attrs)
   else if comment
-    Comment(comment + '(lazy)')
+    attrs.title += ', shortest possible match'
+    Comment(comment + ' (lazy)', attrs)
   else
-    Comment('lazy')
+    attrs.title = 'shortest possible match'
+    Comment('lazy', attrs)
 
 parseRegex = (regex) ->
   if regex instanceof RegExp
