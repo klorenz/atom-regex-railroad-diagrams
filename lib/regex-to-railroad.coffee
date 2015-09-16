@@ -42,9 +42,9 @@ rx2rr = (node, options) ->
 
   doEndOfString   = ->
     if opts.match /m/
-      title = "Beginning of line"
+      title = "End of line"
     else
-      title = "Beginning of string"
+      title = "End of string"
 
     NonTerminal("END", title: title, class: 'zero-width-assertion')
 
