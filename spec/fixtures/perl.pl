@@ -4,6 +4,8 @@ while (<>) {
   m{foobar|x/f}
   m{(foo|bar)}
 
+  m/.*/s
+
 
   $variablename =~ /REGEX[:alnum:]/
   $variablename =~ /REGEX[[:alnum:]]/

@@ -18,6 +18,51 @@ regex-railroad-diagram {
   //@box-outline-color: @tab-border-color;
   @box-outline-color: @text-color-highlight;
 
+
+  // for stroke
+  @L: 240;
+  @D: 200;
+  @A: 0.3;
+
+  // for fill
+  @l: 30;
+  @d:  0;
+  @a: 0.6;
+
+  // for text
+  @tl: 240;
+  @td: 200;
+  @ta:   1;
+
+  @B:  0;
+
+  @tL: 200;
+  @tD: 150;
+
+  @literal-stroke-color: rgba(@D, @L, @D, @A);
+  @assertion-stroke-color: rgba(@L, @D, @L, @A);
+  @capture-stroke-color: rgba(@D, @D, @L, @A);
+  @back-reference-stroke-color: rgba(@D, @D, @L, @A);
+  @character-class-stroke-color: rgba(@L, @L, @D, @A);
+  @character-class-invert-stroke-color: rgba(@L, @D, @D, @A);
+
+  @literal-fill-color: rgba(@d, @l, @d, @a);
+  @assertion-fill-color: rgba(@l, @d, @l, @a);
+  @capture-fill-color: rgba(@d, @d, @l, 0);
+  @back-reference-fill-color: rgba(@d, @d, @l, 0);
+  @character-class-fill-color: rgba(@l, @l, @d, @a);
+  @character-class-invert-fill-color: rgba(@l, @d, @d, @a);
+
+  @literal-text-color: rgba(@td, @tl, @td, @ta);
+  @assertion-text-color: rgba(@tl, @td, @tl, @ta);
+  @capture-text-color: rgba(@td, @td, @tl, @ta);
+  @back-reference-text-color: rgba(@td, @td, @tl, @ta);
+  @character-class-text-color: rgba(@tl, @tl, @td, @ta);
+  @character-class-invert-text-color: rgba(@tl, @td, @td, @ta);
+
+  @quantified-lazy-text-color: rgba(@tD, @tL, @tL, @ta);
+  @quantified-greedy-text-color: rgba(@tL, @tD, @tL, @ta);
+
   .error-message {
     color: @text-color-error;
     // background-color: @background-color-error;
@@ -42,15 +87,15 @@ regex-railroad-diagram {
       text-anchor: middle;
     }
 
-    text.label {
-      text-anchor: start;
-    }
-
-    text.comment {
-      font-size: @font-size;
-      font-family: @font-family;
-      fill: @text-color;
-    }
+    // text.label {
+    //   text-anchor: start;
+    // }
+    //
+    // text.comment {
+    //   font-size: @font-size;
+    //   font-family: @font-family;
+    //   fill: @text-color;
+    // }
 
     rect {
       stroke-width: 3;
@@ -58,9 +103,85 @@ regex-railroad-diagram {
       fill: @box-color;
     }
 
-    rect.group {
-      fill: rgba(0,0,0,0);
-      stroke-dash-array: 10 5;
+    g.literal {
+      rect {
+        stroke: @literal-stroke-color;
+        fill: @literal-fill-color;
+      }
+      text {
+        fill: @literal-text-color;
+      }
     }
+
+    g.character-class {
+      rect {
+        stroke: @character-class-stroke-color;
+        fill: @character-class-fill-color;
+      }
+      text {
+        fill: @character-class-text-color;
+      }
+    }
+
+    g.character-class.invert {
+      rect {
+        stroke: @character-class-invert-stroke-color;
+        fill: @character-class-invert-fill-color;
+      }
+      text {
+        fill: @character-class-invert-text-color;
+      }
+    }
+
+    g.zero-width-assertion {
+      rect {
+        stroke: @assertion-stroke-color;
+        fill: @assertion-fill-color;
+      }
+      text {
+        fill: @assertion-text-color;
+      }
+    }
+
+    g.group {
+      > rect {
+          stroke-width: 1;
+          fill: rgba(0, 0, 0, 0);
+      }
+    }
+
+    g.group.capture-group {
+      > rect {
+        stroke: @capture-stroke-color;
+        fill: @capture-fill-color;
+      }
+      g.caption text {
+        fill: @capture-text-color;
+      }
+    }
+
+    g.back-reference {
+      rect {
+        stroke: @back-reference-stroke-color;
+        fill: @back-reference-fill-color;
+      }
+      text {
+        fill: @back-reference-text-color;
+      }
+    }
+
+    g.quantified.lazy {
+      text {
+        fill: @quantified-lazy-text-color;
+      }
+    }
+
+    g.quantified.greedy {
+      text {
+        fill: @quantified-greedy-text-color;
+      }
+    }
+
+
   }
 }

@@ -5,6 +5,8 @@ RailroadDiagramElement = require "./railroad-diagram-element.coffee"
 
 MATCH_PAIRS = '(': ')', '[': ']', '{': '}', '<': '>'
 
+issue58 = true
+
 module.exports =
   regexRailroadDiagramView: null
 
@@ -29,11 +31,52 @@ module.exports =
     #regexRailroadDiagramViewState: @regexRailroadDiagramView.serialize()
 
   bufferRangeForScope: (editor, scope, position=null) ->
-    if position?
-      result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+    unless issue58
+      if position?
+        result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+      else
+        result = editor.bufferRangeForScopeAtCursor(scope)
+      return result
+
+    # here follows a workaround for fixing #58, till bufferRangeForScopeAtCursor
+    # delivers correct address
+    #
+
+    tabLength = editor.getTabLength()
+
+    unless position?
+      position = editor.getCursorBufferPosition().copy()
+
+    lineStart = [[position.row, 0], [position.row, position.column]]
+
+    if m = editor.getTextInBufferRange(lineStart).match(/\t/g)
+      startTabs = m.length
     else
-      result = editor.bufferRangeForScopeAtCursor(scope)
-    return result
+      startTabs = 0
+
+    # shift the position a little, such that als in case of tabs in beginning
+    # start of regex is recognized as regex
+    if startTabs
+      position.column = position.column - startTabs + startTabs*tabLength
+
+    result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+    return result unless result
+
+    # this is usually only one row, but if at some point the range would span
+    # multiple rows, this still works
+
+    {start, end} = result
+
+    lineStart = [[end.row, 0], [end.row, end.column]]
+    if m = editor.getTextInBufferRange(lineStart).match(/\t/g)
+      endTabs = m.length
+    else
+      endTabs = 0
+
+    return new Range(
+      [start.row, start.column - startTabs*tabLength + startTabs],
+      [end.row, end.column - endTabs*tabLength + endTabs]
+      )
 
   getRegexpBufferRange: (editor) ->
     position = editor.getCursorBufferPosition()
@@ -45,42 +88,16 @@ module.exports =
 
     unless range
       range = @bufferRangeForScope(editor, '.regexp')
-      # flavour = 'regexp'
 
     unless range
       return [null, null]
 
-    if editor.bufferRangeForScopeAtCursor('source.ruby')
-      punctuationSelector = '.punctuation.section.regexp'
-    else if editor.bufferRangeForScopeAtCursor('source.python')
-      punctuationSelector = '.punctuation.definition.string'
-    else if editor.bufferRangeForScopeAtCursor('source.coffee')
-      punctuationSelector = '.punctuation.definition.string'
-    else
-      punctuationSelector = '.punctuation'
-
-    # skip 'r' in strings like r'''...'''
-    while startRange = @bufferRangeForScope editor, '.storage.type.string.python'
-      break if range.start.isEqual startRange.end
-      range = new Range startRange.end, range.end
-
-    # # skip punctuation
-    # while startRange = @bufferRangeForScope editor, punctuationSelector, range.start
-    #   break if range.end.isEqual endRange.start
-    #   range = new Range range.start, endRange.start
-    #
-    # while endRange = @bufferRangeForScope editor, punctuationSelector, [range.end.row, range.end.column-1]
-    #   break if range.end.isEqual endRange.start
-    #   range = new Range range.start, endRange.start
-
     return [range, flavour]
 
   cleanRegex: (regex, flavour) ->
-    opts = []
+    opts = ""
 
     console.log "regex", regex, "flavour", flavour
-
-    debugger
 
     if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
       [regex, opts] = m[2..]
@@ -131,7 +148,7 @@ module.exports =
       return @element.assertHidden() if regex is '/'
 
       [regex, options] = @cleanRegex regex, flavour
-      @element.showDiagram regex, flavour
+      @element.showDiagram regex, {flavour, options}
 
   #   if not range
   #     @emitter.emit 'did-not-find-regexp'

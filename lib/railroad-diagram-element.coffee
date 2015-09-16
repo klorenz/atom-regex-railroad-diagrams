@@ -24,7 +24,7 @@ class RailroadDiagramElement extends HTMLElement
     @remove()
     @subscriptions?.dispose()
 
-  showDiagram: (regex, flavour) ->
+  showDiagram: (regex, options) ->
     return if @currentRegex is regex and not @hidden
 
     @subscriptions?.dispose()
@@ -32,9 +32,9 @@ class RailroadDiagramElement extends HTMLElement
 
     @removeChildren()
     try
-      Regex2RailRoadDiagram regex, this, flavour: flavour
+      Regex2RailRoadDiagram regex, this, options
 
-      for e in $(this).find('text[title]')
+      for e in $(this).find('g[title]')
         @subscriptions.add atom.tooltips.add e, title: $(e).attr('title')
 
       @currentRegex = regex
@@ -44,11 +44,13 @@ class RailroadDiagramElement extends HTMLElement
     @panel.show()
 
   showError: (regex, e) ->
+    console.log "caught error when trying to display regex #{regex}", e.stack
     if e.offset
       sp = " ".repeat e.offset
       @innerHTML = """<div class="error-message"><pre class="text-error">#{regex}\n#{sp}^ #{e.message}</pre></div>"""
     else
       @innerHTML = """<div class="error-message"><pre>#{regex}</pre><p class="text-error">#{e.message}</p></div>"""
+
   assertHidden: ->
     @panel.hide() unless @hidden
     @currentRegex = null
