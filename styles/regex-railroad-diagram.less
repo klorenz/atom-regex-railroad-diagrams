@@ -18,26 +18,49 @@ regex-railroad-diagram {
   //@box-outline-color: @tab-border-color;
   @box-outline-color: @text-color-highlight;
 
+  .set-color-basis() when (lightness(@text-color) >= 50%)  {
+      // for stroke
+      @L: 240;
+      @D: 200;
+      @A: 0.3;
 
-  // for stroke
-  @L: 240;
-  @D: 200;
-  @A: 0.3;
+      // for fill
+      @l: 30;
+      @d:  0;
+      @a: 0.6;
 
-  // for fill
-  @l: 30;
-  @d:  0;
-  @a: 0.6;
+      // for text
+      @tl: 240;
+      @td: 200;
+      @ta:   1;
 
-  // for text
-  @tl: 240;
-  @td: 200;
-  @ta:   1;
+      @B:  0;
 
-  @B:  0;
+      @tL: 200;
+      @tD: 150;
+  }
+  .set-color-basis() when (lightness(@text-color) < 50%)  {
+      // for stroke
+      @L: 150;
+      @D: 40;
+      @A: 0.6;
 
-  @tL: 200;
-  @tD: 150;
+      // for fill
+      @l: 30;
+      @d:  0;
+      @a: 0.1;
+
+      // for text
+      @tl: 100;
+      @td: 20;
+      @ta:   1;
+
+      @B:  0;
+
+      @tL: 100;
+      @tD: 50;
+  }
+  .set-color-basis();
 
   @literal-stroke-color: rgba(@D, @L, @D, @A);
   @assertion-stroke-color: rgba(@L, @D, @L, @A);
