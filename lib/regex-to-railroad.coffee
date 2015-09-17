@@ -130,11 +130,20 @@ rx2rr = (node, options) ->
       Group rx2rr(node.body, options), Comment("capture #{node.index}", class: "caption"), minWidth: 55, attrs: {class: 'capture-group group'}
 
     when "non-capture-group"
-      Group rx2rr(node.body, options), null, attrs: {class: 'group'}
+      # Group rx2rr(node.body, options), null, attrs: {class: 'group'}
+      rx2rr(node.body, options)
 
-    when "positive-lookahead", "negative-lookahead", \
-         "positive-lookbehind", "negative-lookbehind"
-      Group rx2rr(node.body, options), Comment(node.type)
+    when "positive-lookahead"
+      Group rx2rr(node.body, options), Comment("=> ?", title: "Positive lookahead", class: "caption"), attrs: {class: "lookahead positive zero-width-assertion group"}
+
+    when "negative-lookahead"
+      Group rx2rr(node.body, options), Comment("!> ?", title: "Negative lookahead", class: "caption"), attrs: {class: "lookahead negative zero-width-assertion group"}
+
+    when "positive-lookbehind"
+      Group rx2rr(node.body, options), Comment("<= ?", title: "Positive lookbehind", class: "caption"), attrs: {class: "lookbehind positive zero-width-assertion group"}
+
+    when "negative-lookbehind"
+      Group rx2rr(node.body, options), Comment("<! ?", title: "Negative lookbehind", class: "caption"), attrs: {class: "lookbehind negative zero-width-assertion group"}
 
     when "back-reference"
       NonTerminal("#{node.code}", title: "Match capture #{node.code} (Back Reference)", class: 'back-reference')
@@ -185,7 +194,7 @@ rx2rr = (node, options) ->
       NonTerminal("0-9", class: 'character-class')
 
     when "null-character"
-      Terminal("NULL", title: "Null character '\\0'", class: 'literal')
+      NonTerminal("NULL", title: "Null character '\\0'", class: 'literal')
 
     when "non-digit"
       NonTerminal("not 0-9", title: "All except digits", class: 'character-class invert')
