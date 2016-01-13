@@ -1,3 +1,9 @@
+## 0.11
+- support julia (thanks to jkroso)
+
+## 0.10
+- colorize graph
+
 ## 0.9
 - complete redesign to use new style HTMLElement and addBottomPanel
 - improve handling of regexes (support perl's substitutions
