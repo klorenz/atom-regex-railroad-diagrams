@@ -9,3 +9,5 @@ var a = /^foo/
 			/./
 
 /dbo\.Test\(\)/
+
+/^\/((deu|fra|nel)\/(de|en|fr|nl))\//i
