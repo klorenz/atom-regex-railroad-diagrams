@@ -101,7 +101,7 @@ module.exports =
 
     if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
       [regex, opts] = m[2..]
-    else if m = (flavour.match(/python/) and regex.match(/^u?r('''|"""|"|')(.*)\1$/))
+    else if m = (flavour.match(/python|julia/) and regex.match(/^u?r('''|"""|"|')(.*)\1$/))
       regex = m[2]
     else if m = (flavour.match(/coffee/) and regex.match(/^\/\/\/(.*)\/\/\/(\w*)/))
       [regex, opts] = m[1..]
