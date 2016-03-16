@@ -1,3 +1,8 @@
+## 0.12
+- capture text in dark themes a little lighter for better reading
+- fix enhancement #68, add named capture support
+- fix issue #65, and set max-height to half of view height
+
 ## 0.11
 - support julia (thanks to jkroso)
 
