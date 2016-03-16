@@ -245,6 +245,15 @@ rx2rr = (node, options) ->
     when "hex", "octal", "unicode"
       Terminal(node.text, class: 'literal charachter-code')
 
+    when "unicode-category"
+      _text = node.code
+      _class = 'unicode-category character-class'
+      if node.invert
+        _class += ' invert'
+        _text = "NON-#{_text}"
+
+      NonTerminal(_text, title: "Unicode Category #{node.code}", class: _class)
+
     when "any-character"
       extra = unless isSingleString() then " except newline" else ""
       NonTerminal("ANY", title: "Any character#{extra}" , class: 'character-class')

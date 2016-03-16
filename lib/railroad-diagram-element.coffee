@@ -44,7 +44,7 @@ class RailroadDiagramElement extends HTMLElement
     @panel.show()
 
   showError: (regex, e) ->
-    console.log "caught error when trying to display regex #{regex}", e.stack
+    #console.log "caught error when trying to display regex #{regex}", e.stack
     if e.offset
       sp = " ".repeat e.offset
       @innerHTML = """<div class="error-message"><pre class="text-error">#{regex}\n#{sp}^ #{e.message}</pre></div>"""

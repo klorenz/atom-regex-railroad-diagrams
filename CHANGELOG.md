@@ -1,5 +1,9 @@
+## 0.14
+- add unicode categories as requested by issue #67
+- add enable/disable commands for controlling diagram display (partly #61)
+
 ## 0.13
-- fix isseu #64, nested capture indexing
+- fix issue #64, nested capture indexing
 
 ## 0.12
 - capture text in dark themes a little lighter for better reading

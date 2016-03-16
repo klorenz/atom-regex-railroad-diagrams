@@ -10,18 +10,39 @@ issue58 = true
 module.exports =
   regexRailroadDiagramView: null
 
+  config:
+    enabled:
+      type: "boolean"
+      default: true
+
   activate: (state) ->
     @subscriptions = new CompositeDisposable
     @emitter       = new Emitter
 
+    @element = (new RailroadDiagramElement).initialize this
+
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @subscriptions.add editor.onDidChangeCursorPosition debounce (=> @checkForRegExp()), 100
 
-    #@subscriptions.add atom.workspace.onDidChangeActivePaneItem =>
-      # @element.assertHide()
-      #debounce (=> @checkForRegExp()), 100
+    if atom.config.get('regex-railroad-diagram.enabled')
+      @addDisableCommand()
+    else
+      @addEnableCommand()
 
-    @element = (new RailroadDiagramElement).initialize this
+
+  addDisableCommand: ->
+    @cur_cmd = atom.commands.add "atom-workspace", "regex-railroad-diagram:disable", =>
+      @cur_cmd.dispose()
+      atom.config.set('regex-railroad-diagram.enabled', false)
+      @addEnableCommand()
+      @checkForRegExp()
+
+  addEnableCommand: ->
+    @cur_cmd = atom.commands.add "atom-workspace", "regex-railroad-diagram:enable", =>
+      @cur_cmd.dispose()
+      atom.config.set('regex-railroad-diagram.enabled', true)
+      @addDisableCommand()
+      @checkForRegExp()
 
   deactivate: ->
     #@regexRailroadDiagramView.destroy()
@@ -97,7 +118,7 @@ module.exports =
   cleanRegex: (regex, flavour) ->
     opts = ""
 
-    console.log "regex", regex, "flavour", flavour
+    #console.log "regex", regex, "flavour", flavour
 
     if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
       [regex, opts] = m[2..]
@@ -127,11 +148,14 @@ module.exports =
     else if m = regex.match(/^\/(.*)\/(\w*)$/)
       [regex, opts] = m[1..]
 
-    console.log "regex", regex, "flavour", flavour, "opts", opts
+    #console.log "regex", regex, "flavour", flavour, "opts", opts
 
     return [regex, opts]
 
   checkForRegExp: ->
+    if not atom.config.get('regex-railroad-diagram.enabled')
+      return @element.assertHidden()
+
     editor = atom.workspace.getActiveTextEditor()
     return unless editor?
 
