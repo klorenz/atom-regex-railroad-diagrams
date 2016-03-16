@@ -127,7 +127,12 @@ rx2rr = (node, options) ->
             OneOrMore(body, quantifiedComment(">= #{min}x", greedy, title: "repeat at least #{min} time" + plural(min)))
 
     when "capture-group"
-      Group rx2rr(node.body, options), Comment("capture #{node.index}", class: "caption"), minWidth: 55, attrs: {class: 'capture-group group'}
+      text = "capture #{node.index}"
+      min_width = 55
+      if node.name
+        text += " (#{node.name})"
+        min_width = 55 + (node.name.split('').length+3)*7
+      Group rx2rr(node.body, options), Comment(text, class: "caption"), minWidth: min_width, attrs: {class: 'capture-group group'}
 
     when "non-capture-group"
       # Group rx2rr(node.body, options), null, attrs: {class: 'group'}
