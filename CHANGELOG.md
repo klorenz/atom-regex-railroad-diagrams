@@ -1,3 +1,6 @@
+## 0.13
+- fix isseu #64, nested capture indexing
+
 ## 0.12
 - capture text in dark themes a little lighter for better reading
 - fix enhancement #68, add named capture support
