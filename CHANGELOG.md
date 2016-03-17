@@ -1,3 +1,6 @@
+## 0.15
+- add inline-flag interpretation "(?i)foo"
+
 ## 0.14
 - add unicode categories as requested by issue #67
 - add enable/disable commands for controlling diagram display (partly #61)

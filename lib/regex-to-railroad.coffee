@@ -28,6 +28,34 @@ makeLiteral = (text) ->
     else
       new Sequence sequence
 
+get_flag_name = (flag) ->
+  flag_names = {
+    A: 'pcre:anchored'
+    D: 'pcre:dollar-endonly'
+    S: 'pcre:study'
+    U: 'pcre:ungreedy'
+    X: 'pcre:extra'
+    J: 'pcre:extra'
+    i: 'case-insensitive'
+    m: 'multi-line'
+    s: 'dotall'
+    e: 'evaluate'
+    o: 'compile-once'
+    x: 'extended-legilibility'
+    g: 'global'
+    c: 'current-position'
+    p: 'preserve'
+    d: 'no-unicode-rules'
+    u: 'unicode-rules'
+    a: 'ascii-rules'
+    l: 'current-locale'
+  }
+
+  if flag of flag_names
+    flag_names[flag]
+  else
+    "unknown:#{flag}"
+
 rx2rr = (node, options) ->
   opts = options.options
 
@@ -133,6 +161,32 @@ rx2rr = (node, options) ->
         text += " (#{node.name})"
         min_width = 55 + (node.name.split('').length+3)*7
       Group rx2rr(node.body, options), Comment(text, class: "caption"), minWidth: min_width, attrs: {class: 'capture-group group'}
+
+    when "flags"
+      turn_on_long = []
+      turn_off_long = []
+      console.log node
+      flags = node.body.join('')
+      [turn_on, turn_off] = flags.split('-')
+      turn_on ?= ''
+      turn_off ?= ''
+      for f in turn_on.split('')
+        turn_on_long.push get_flag_name(f)
+
+      for f in turn_off.split('')
+        if f == 'i'
+          turn_on_long.push('case-sensitive')
+        else
+          turn_off_long.push get_flag_name(f)
+
+      _title = []
+      if turn_on
+        _title.push "Turn on: "+turn_on_long.join(', ')
+      if turn_off
+        _title.push "Turn off: "+turn_off_long.join(', ')
+
+      NonTerminal("SET: "+node.body.join(''), title: _title.join("\n"), class: 'zero-width-assertion')
+      #NonTerminal("WORD", title: "Word character A-Z, 0-9, _", class: 'character-class')
 
     when "non-capture-group"
       # Group rx2rr(node.body, options), null, attrs: {class: 'group'}
