@@ -1,3 +1,6 @@
+## 0.16
+- make texts lighter for dark theme to improve readablility
+
 ## 0.15
 - add inline-flag interpretation "(?i)foo"
 
