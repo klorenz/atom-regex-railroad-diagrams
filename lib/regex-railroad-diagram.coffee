@@ -54,7 +54,7 @@ module.exports =
   bufferRangeForScope: (editor, scope, position=null) ->
     unless issue58
       if position?
-        result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+        result = editor.bufferRangeForScopeAtPosition(scope, position)
       else
         result = editor.bufferRangeForScopeAtCursor(scope)
       return result
@@ -80,7 +80,7 @@ module.exports =
     if startTabs
       position.column = position.column - startTabs + startTabs*tabLength
 
-    result = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, position)
+    result = editor.bufferRangeForScopeAtPosition(scope, position)
     return result unless result
 
     # this is usually only one row, but if at some point the range would span
