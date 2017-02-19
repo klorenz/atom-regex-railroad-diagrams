@@ -1,7 +1,7 @@
 {
   "name": "regex-railroad-diagram-fork",
   "main": "./lib/regex-railroad-diagram",
-  "version": "0.17.4",
+  "version": "0.17.5",
   "description": "Display railroad diagram of regex under cursor. NOTE: Fork of original to fix minor bugs - all credit goes to original author.",
   "repository": "https://github.com/mikesprague/atom-regex-railroad-diagrams-fork",
   "license": "MIT",
