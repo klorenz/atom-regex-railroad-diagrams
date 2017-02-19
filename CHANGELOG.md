@@ -1,3 +1,7 @@
+## 0.17
+- fork (original version appears unmaintained) to make small fixes when needed
+- remove code deprecated in atom v1.13+ to fix editor warnings
+
 ## 0.16
 - make texts lighter for dark theme to improve readablility
 
