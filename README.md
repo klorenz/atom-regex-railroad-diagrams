@@ -1,6 +1,6 @@
 # regex-railroad-diagram package
 
-**_Please Note:_** This fork was created to fix minor bugs related to changes in the Atom Editor API (v1.13+). It is not under active development and other than necessary fixes is unchanged from original repo/package
+**_Please Note:_** This fork was created to fix minor bugs related to changes in the Atom Editor API (v1.13+). It is not under active development and other than necessary fixes is unchanged from original repo/package.
 
 ---
 
