@@ -5,7 +5,7 @@ under cursor.
 
 An (old) Screenshot:
 
-![regex-railraod-diagram in action](https://raw.githubusercontent.com/klorenz/atom-regex-railroad-diagrams/3552667228c192e81a0d2e5843e824c064b8e4b9/regex-railroad-diagrams.png)
+![regex-railraod-diagram in action](https://raw.githubusercontent.com/klorenz/atom-regex-railroad-diagrams/master/regex-railroad-diagrams.png)
 
 It also shows you a parsing error message, if your regex is not syntactically
 correct.
@@ -19,8 +19,8 @@ not parsed or displayed correctly.
   railroad diagram automatically opens.  It changes, while you change the text.
 
 - if you have some text selected or your cursor is somewhere else (where no
-  regex is recognized), you can hit `ctrl-r ctrl-r` to open the railroad
-  diagram view.  You then can edit the regex and hit `enter` to insert it at your cursor position or replace current selection.  Hit `esc` to cancel the view
+  regex is recognized), you can hit **ctrl-r ctrl-r** to open the railroad
+  diagram view.  You then can edit the regex and hit **enter** to insert it at your cursor position or replace current selection.  Hit **esc** to cancel the view
 
 ## Contributors
 
