@@ -33,7 +33,10 @@ module.exports =
         if not @element.isVisible()
           flavour = 'perl'
           options = ''
-          @element.showDiagram atom.workspace.getActiveTextEditor().getSelectedText(), {flavour, options}
+          editor = atom.workspace.getActiveTextEditor()
+          @element.showDiagram editor.getSelectedText(), {flavour, options}
+          #editor.scrollToCursorPosition()
+
           @element.focusTextEditor()
 
       #  else TODO
@@ -199,6 +202,7 @@ module.exports =
 
       [regex, options] = @cleanRegex regex, flavour
       @element.showDiagram regex, {flavour, options}
+      #editor.scrollToCursorPosition()
 
   #   if not range
   #     @emitter.emit 'did-not-find-regexp'

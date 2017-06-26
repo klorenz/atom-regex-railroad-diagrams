@@ -137,6 +137,7 @@ class RailroadDiagramElement extends HTMLElement
 
   showDiagram: (regex, options) ->
     return if @currentRegex is regex and not @hidden and options.options is @options?.options
+    @activeEditor = atom.workspace.getActiveTextEditor()
     @options = options
     @textEditor.setText(regex)
     @panel.show()
@@ -154,6 +155,8 @@ class RailroadDiagramElement extends HTMLElement
       @currentRegex = regex
     catch e
       @showError regex, e
+
+    setTimeout (=> @activeEditor.scrollToCursorPosition()), 200
 
   showError: (regex, e) ->
     #console.log "caught error when trying to display regex #{regex}", e.stack
