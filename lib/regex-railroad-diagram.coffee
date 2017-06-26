@@ -5,6 +5,7 @@ RailroadDiagramElement = require "./railroad-diagram-element.coffee"
 
 MATCH_PAIRS = '(': ')', '[': ']', '{': '}', '<': '>'
 
+# I do not know, when this has been fixed, but with current 1.18.x it is gone
 issue58 = require('semver').lt(atom.appVersion, "1.18.0")
 
 log_debug = console.log.bind console, "rx2rr"
@@ -28,12 +29,21 @@ module.exports =
       @subscriptions.add editor.onDidChangeCursorPosition debounce (=> @checkForRegExp()), 100
 
     @subscriptions.add atom.commands.add 'atom-text-editor',
-      'regex-railraod-diagram:show': =>
-        flavour = 'perl'
-        options = 'g'
-        @element.showDiagram atom.workspace.getActiveTextEditor().getSelectedText(), {flavour, options}
-        @element.focusTextEditor()
-        # TODO: set the focus to editor in rr area
+      'regex-railroad-diagram:show': =>
+        if not @element.isVisible()
+          flavour = 'perl'
+          options = ''
+          @element.showDiagram atom.workspace.getActiveTextEditor().getSelectedText(), {flavour, options}
+          @element.focusTextEditor()
+
+      #  else TODO
+#        Problem: on confirm the regex markers are also overridden
+#          editor = atom.workspace.getActiveTextEditor()
+#          # select current regex first
+#          [range, flavour] = @getRegexpBufferRange editor
+#          editor.setSelectedBufferRange range
+#          @element.focusTextEditor()
+
 
 
     if atom.config.get('regex-railroad-diagram.enabled')

@@ -30,6 +30,7 @@ class RailroadDiagramElement extends HTMLElement
 
       @showRailRoadDiagram @textEditor.getText(), @options
 
+
       # # with a little delay, we do not get flickering if person types fast
       # if changeDelay
       #   clearTimeout(changeDelay)
@@ -100,8 +101,26 @@ class RailroadDiagramElement extends HTMLElement
 
     @querySelector('.texteditor-container').appendChild @textEditorView
 
+    @textEditorSubscriptions.add atom.commands.add @textEditor.element,
+      'core:confirm': => @confirm()
+      'core:cancel':  => @cancel()
+
   focusTextEditor: ->
     @textEditorView.focus()
+
+  confirm: ->
+    editor = atom.workspace.getActiveTextEditor()
+    selections = editor.getSelections()
+    for selection in selections
+      editor.setTextInBufferRange selection.getBufferRange(), @textEditor.getText()
+    atom.views.getView(atom.workspace).focus()
+
+  cancel: ->
+    @assertHidden()
+    atom.views.getView(atom.workspace).focus()
+
+  isVisible: ->
+    not @hidden
 
   setModel: (@model) ->
 
