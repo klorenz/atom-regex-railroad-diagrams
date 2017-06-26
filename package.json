@@ -1,12 +1,12 @@
 {
   "name": "regex-railroad-diagram",
   "main": "./lib/regex-railroad-diagram",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Display railroad diagram of regex under cursor.",
   "repository": "https://github.com/klorenz/atom-regex-railroad-diagrams",
   "license": "MIT",
   "engines": {
-    "atom": ">0.200.0"
+    "atom": ">1.13.0"
   },
   "dependencies": {
     "atom-space-pen-views": "^2.0.3",
