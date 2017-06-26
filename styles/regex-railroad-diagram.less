@@ -4,10 +4,9 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-regex-railroad-diagram {
+.regex-railroad-diagram {
   background: @tab-bar-background-color;
   overflow-x: scroll;
-
 
   display: block;
 
@@ -17,6 +16,28 @@ regex-railroad-diagram {
   @box-color: @background-color-highlight;
   //@box-outline-color: @tab-border-color;
   @box-outline-color: @text-color-highlight;
+
+  .settings-view {
+    display: flex;
+
+    padding: 5px;
+
+    > div {
+      padding: 5px 5px;
+    }
+
+    .texteditor-container {
+      flex: 100 1;
+    }
+
+    .option-buttons {
+      flex: 1;
+      flex-wrap: nowrap;
+      display: flex;
+      font-weight: bold;
+    }
+
+  }
 
   .set-color-basis() when (lightness(@text-color) >= 50%)  {
       // for stroke

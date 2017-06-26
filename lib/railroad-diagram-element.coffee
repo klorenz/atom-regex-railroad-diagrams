@@ -1,6 +1,6 @@
 {$} = require 'atom-space-pen-views'
 {Regex2RailRoadDiagram} = require './regex-to-railroad.coffee'
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, TextEditor} = require 'atom'
 
 
 class RailroadDiagramElement extends HTMLElement
@@ -8,53 +8,145 @@ class RailroadDiagramElement extends HTMLElement
 
   initialize: (@model) ->
     @panel = atom.workspace.addBottomPanel item: this, visible: false
+    @classList.add "regex-railroad-diagram"
     @currentRegex = null
     @subscriptions = null
+    @createView()
     this
+
+  createView: ->
+    @textEditor = new TextEditor
+      mini: true
+      tabLength: 2
+      softTabs: true
+      softWrapped: false
+      placeholderText: 'Type in your regex'
+
+    @textEditorSubscriptions = new CompositeDisposable
+
+    changeDelay = null
+    @textEditorSubscriptions.add @textEditor.onDidChange =>
+      # TODO: if inserted a (, add the ) (and so on.)
+
+      @showRailRoadDiagram @textEditor.getText(), @options
+
+      # # with a little delay, we do not get flickering if person types fast
+      # if changeDelay
+      #   clearTimeout(changeDelay)
+      #   changeDelay = null
+      #
+      # changeDelay = setTimeout(
+      #   (=> @showRailRoadDiagram @textEditor.getText(), @options),
+      #   300)
+
+    @regexGrammars = {}
+    for grammar in atom.grammars.getGrammars()
+      console.log "grammar", grammar.name
+      if grammar.name.match /.*reg.*ex/i
+        displayName = grammar.name
+        @textEditor.setGrammar(grammar)
+        #if m = grammar.name.match /\((.*)\)/
+        #  displayName = m[1]
+        @regexGrammars[grammar.name] = grammar
+
+    possibleGrammars = [
+      'Regular Expression Replacement (Javascript)'
+      'Regular Expressions (Javascript)'
+      'Regular Expressions (Python)'
+    ]
+
+    for name in possibleGrammars
+      if name in @regexGrammars
+        @textEditor.setGrammar(@regexGrammars[name])
+        break
+
+    @innerHTML = """
+      <section class="section settings-view">
+        <div class="texteditor-container">
+        </div>
+        <div class="btn-group option-buttons">
+          <button class="btn btn-multiline">m</button>
+          <button class="btn btn-dotall">s</button>
+        </div>
+      </section>
+      <div class="regex-railroad-view-container">
+      </div>
+    """
+
+    @viewContainer = @querySelector('.regex-railroad-view-container')
+    @options = null
+
+    @multilineButton = @querySelector('.btn-multiline')
+    @dotallButton = @querySelector('.btn-dotall')
+
+    btnClick = (btnSelector, opt) =>
+      btn = @querySelector(btnSelector)
+      if 'selected' in btn.classList
+        btn.classList.remove 'selected'
+        @options.options = @options.options.replace opt, ''
+      else
+        btn.classList.add 'selected'
+        @options.options = @options.options + opt
+
+      @showRailRoadDiagram @textEditor.getText(), @options
+
+    @multilineButton.onclick = =>
+      btnClick '.btn-multiline','m'
+
+    @dotallButton.onclick = =>
+      btnClick '.btn-dotall','s'
+
+    @textEditorView = atom.views.getView(@textEditor)
+
+    @querySelector('.texteditor-container').appendChild @textEditorView
+
+  focusTextEditor: ->
+    @textEditorView.focus()
 
   setModel: (@model) ->
 
-  removeChildren: ->
-    for child in @childNodes
+  removeDiagram: ->
+    for child in @viewContainer.childNodes
       child.remove()
+    @subscriptions?.dispose()
 
   destroy: ->
-    @removeChildren()
+    @removeDiagram()
     @panel.remove()
     @remove()
-    @subscriptions?.dispose()
+    @textEditorSubscriptions?.dispose()
 
   showDiagram: (regex, options) ->
-    return if @currentRegex is regex and not @hidden
+    return if @currentRegex is regex and not @hidden and options.options is @options?.options
+    @options = options
+    @textEditor.setText(regex)
+    @panel.show()
 
-    @subscriptions?.dispose()
+  showRailRoadDiagram: (regex, options) ->
+    @removeDiagram()
+
     @subscriptions = new CompositeDisposable
-
-    @removeChildren()
     try
-      Regex2RailRoadDiagram regex, this, options
+      Regex2RailRoadDiagram regex, @viewContainer, options
 
-      for e in $(this).find('g[title]')
+      for e in $(@viewContainer).find('g[title]')
         @subscriptions.add atom.tooltips.add e, title: $(e).attr('title')
 
       @currentRegex = regex
     catch e
       @showError regex, e
 
-    @panel.show()
-
   showError: (regex, e) ->
     #console.log "caught error when trying to display regex #{regex}", e.stack
     if e.offset
       sp = " ".repeat e.offset
-      @innerHTML = """<div class="error-message"><pre class="text-error">#{regex}\n#{sp}^ #{e.message}</pre></div>"""
+      @viewContainer.innerHTML = """<div class="error-message"><pre class="text-error">#{regex}\n#{sp}^ #{e.message}</pre></div>"""
     else
-      @innerHTML = """<div class="error-message"><pre>#{regex}</pre><p class="text-error">#{e.message}</p></div>"""
+      @viewContainer.innerHTML = """<div class="error-message"><pre>#{regex}</pre><p class="text-error">#{e.message}</p></div>"""
 
   assertHidden: ->
     @panel.hide() unless @hidden
     @currentRegex = null
     @subscriptions?.dispose()
-
 
 module.exports = RailroadDiagramElement = document.registerElement 'regex-railroad-diagram', prototype: RailroadDiagramElement.prototype

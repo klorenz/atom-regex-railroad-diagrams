@@ -5,7 +5,10 @@ RailroadDiagramElement = require "./railroad-diagram-element.coffee"
 
 MATCH_PAIRS = '(': ')', '[': ']', '{': '}', '<': '>'
 
-issue58 = true
+issue58 = require('semver').lt(atom.appVersion, "1.18.0")
+
+log_debug = console.log.bind console, "rx2rr"
+log_debug = ->
 
 module.exports =
   regexRailroadDiagramView: null
@@ -23,6 +26,15 @@ module.exports =
 
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @subscriptions.add editor.onDidChangeCursorPosition debounce (=> @checkForRegExp()), 100
+
+    @subscriptions.add atom.commands.add 'atom-text-editor',
+      'regex-railraod-diagram:show': =>
+        flavour = 'perl'
+        options = 'g'
+        @element.showDiagram atom.workspace.getActiveTextEditor().getSelectedText(), {flavour, options}
+        @element.focusTextEditor()
+        # TODO: set the focus to editor in rr area
+
 
     if atom.config.get('regex-railroad-diagram.enabled')
       @addDisableCommand()
@@ -118,6 +130,8 @@ module.exports =
   cleanRegex: (regex, flavour) ->
     opts = ""
 
+    log_debug "cleanRegex", regex, flavour
+
     #console.log "regex", regex, "flavour", flavour
 
     if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
@@ -133,7 +147,7 @@ module.exports =
         text = text + close + m[4]
         close = expectedClose
       regexForEscaped = new RegExp("\\\\(#{open}|#{close})", 'g')
-      regex = text.replace(/\//, '\\/').replace(regexForEscaped, '$1')
+      regex = text.replace(new RegExp("\\/", '\\/').replace(regexForEscaped, '$1'))
     else if m = (flavour.match(/perl/) and (
         regex.match(/^(?:m|qr)(.)(.*)(\1|\W)(\w*)$/) or
         regex.match(/^s(.)(.*)(\1|\W)(?:\1.*\W|.*\1)(\w*)$/)
@@ -150,6 +164,7 @@ module.exports =
 
     #console.log "regex", regex, "flavour", flavour, "opts", opts
 
+    log_debug "cleanRegex done:", regex, opts
     return [regex, opts]
 
   checkForRegExp: ->
@@ -160,6 +175,7 @@ module.exports =
     return unless editor?
 
     [range, flavour] = @getRegexpBufferRange editor
+    log_debug "range", range, "flavour", flavour
 
     if not range
       @element.assertHidden()
