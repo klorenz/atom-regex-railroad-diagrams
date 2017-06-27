@@ -24,6 +24,8 @@ class RailroadDiagramElement extends HTMLElement
 
     @textEditorSubscriptions = new CompositeDisposable
 
+    @is_visible = false
+
     changeDelay = null
     @textEditorSubscriptions.add @textEditor.onDidChange =>
       # TODO: if inserted a (, add the ) (and so on.)
@@ -120,7 +122,7 @@ class RailroadDiagramElement extends HTMLElement
     atom.views.getView(atom.workspace).focus()
 
   isVisible: ->
-    not @hidden
+    @is_visible
 
   setModel: (@model) ->
 
@@ -130,6 +132,7 @@ class RailroadDiagramElement extends HTMLElement
     @subscriptions?.dispose()
 
   destroy: ->
+    @is_visible = false
     @removeDiagram()
     @panel.remove()
     @remove()
@@ -137,6 +140,7 @@ class RailroadDiagramElement extends HTMLElement
 
   showDiagram: (regex, options) ->
     return if @currentRegex is regex and not @hidden and options.options is @options?.options
+    @is_visible = true
     @activeEditor = atom.workspace.getActiveTextEditor()
     @options = options
     @textEditor.setText(regex)
@@ -170,5 +174,6 @@ class RailroadDiagramElement extends HTMLElement
     @panel.hide() unless @hidden
     @currentRegex = null
     @subscriptions?.dispose()
+    @is_visible = false
 
 module.exports = RailroadDiagramElement = document.registerElement 'regex-railroad-diagram', prototype: RailroadDiagramElement.prototype

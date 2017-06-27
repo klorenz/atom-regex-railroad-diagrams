@@ -31,6 +31,7 @@ module.exports =
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'regex-railroad-diagram:show': =>
         if not @element.isVisible()
+          console.log "is not visible"
           flavour = 'perl'
           options = ''
           editor = atom.workspace.getActiveTextEditor()
@@ -38,6 +39,8 @@ module.exports =
           #editor.scrollToCursorPosition()
 
           @element.focusTextEditor()
+        else
+          console.log "is visible"
 
       #  else TODO
 #        Problem: on confirm the regex markers are also overridden
