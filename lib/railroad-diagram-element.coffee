@@ -45,7 +45,7 @@ class RailroadDiagramElement extends HTMLElement
     @regexGrammars = {}
     for grammar in atom.grammars.getGrammars()
       console.log "grammar", grammar.name
-      if grammar.name.match /.*reg.*ex/i
+      if grammar.name?.match /.*reg.*ex/i
         displayName = grammar.name
         @textEditor.setGrammar(grammar)
         #if m = grammar.name.match /\((.*)\)/
