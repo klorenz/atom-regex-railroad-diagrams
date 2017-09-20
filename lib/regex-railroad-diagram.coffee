@@ -90,8 +90,10 @@ module.exports =
     # here follows a workaround for fixing #58, till bufferRangeForScopeAtCursor
     # delivers correct address
     #
-
-    tabLength = editor.getTabLength()
+    
+    # new Atom tabs management
+    # tabLength = editor.getTabLength()
+    tabLength = 1
 
     unless position?
       position = editor.getCursorBufferPosition().copy()
