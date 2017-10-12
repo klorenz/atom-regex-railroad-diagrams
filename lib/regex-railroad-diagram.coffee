@@ -148,8 +148,6 @@ module.exports =
 
     log_debug "cleanRegex", regex, flavour
 
-    #console.log "regex", regex, "flavour", flavour
-
     if m = (flavour.match(/php/) and regex.match(/^(["'])\/(.*)\/(\w*)\1$/))
       [regex, opts] = m[2..]
     else if m = (flavour.match(/python|julia/) and regex.match(/^u?r('''|"""|"|')(.*)\1$/))
@@ -158,12 +156,7 @@ module.exports =
       [regex, opts] = m[1..]
     else if m = (flavour.match(/ruby/) and regex.match(/^%r(.)(.*)(\W)(\w*)$/))
       [open, text, close, opts] = m[1..]
-      expectedClose = MATCH_PAIRS[open] or open
-      if close != expectedClose
-        text = text + close + m[4]
-        close = expectedClose
-      regexForEscaped = new RegExp("\\\\(#{open}|#{close})", 'g')
-      regex = text.replace(new RegExp("\\/", '\\/').replace(regexForEscaped, '$1'))
+      regex = text.replace(/\//g, '\\/')
     else if m = (flavour.match(/perl/) and (
         regex.match(/^(?:m|qr)(.)(.*)(\1|\W)(\w*)$/) or
         regex.match(/^s(.)(.*)(\1|\W)(?:\1.*\W|.*\1)(\w*)$/)
@@ -177,8 +170,6 @@ module.exports =
       regex = text.replace(/\//, '\\/').replace(regexForEscaped, '$1')
     else if m = regex.match(/^\/(.*)\/(\w*)$/)
       [regex, opts] = m[1..]
-
-    #console.log "regex", regex, "flavour", flavour, "opts", opts
 
     log_debug "cleanRegex done:", regex, opts
     return [regex, opts]
